@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Новостная лента</title>
+    <style>
+        /* Общие стили */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        /* Шапка */
+        .news-header {
+            background-color: #4267B2;
+            color: white;
+            padding: 15px 0;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .news-header h1 {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        /* Основной контент */
+        .news-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        /* Карточка новости */
+        .news-card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+
+        .news-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .news-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .news-content {
+            padding: 15px;
+        }
+        
+        .news-meta {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .news-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+        
+        .news-author {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .news-date {
+            color: #65676B;
+            font-size: 12px;
+        }
+        
+        .news-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .news-text {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .news-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .news-tag {
+            background-color: #e9f0ff;
+            color: #4267B2;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+        
+        .news-actions {
+            display: flex;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+        
+        .news-action {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            color: #65676B;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            transition: background-color 0.2s;
+        }
+        
+        .news-action:hover {
+            background-color: #f5f5f5;
+            border-radius: 4px;
+        }
+
+        .news-action.like:hover {
+            color: #f02849;
+        }
+
+        .news-action.comment:hover {
+            color: #45bd62;
+        }
+
+        .news-action.share:hover {
+            color: #1877f2;
+        }
+        
+        /* Боковая панель */
+        .news-sidebar {
+            margin-top: 20px;
+        }
+        
+        .sidebar-card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .sidebar-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .trending-item {
+            display: flex;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            align-items: center;
+        }
+        
+        .trending-number {
+            font-weight: bold;
+            color: #4267B2;
+            margin-right: 10px;
+            min-width: 20px;
+        }
+        
+        .trending-text {
+            font-size: 14px;
+        }
+        
+        .trending-count {
+            font-size: 12px;
+            color: #65676B;
+            margin-top: 3px;
+        }
+
+        .trending-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 10px;
+        }
+        
+        /* Адаптация */
+        @media (min-width: 768px) {
+            .news-container {
+                display: flex;
+                gap: 20px;
+            }
+            
+            .news-main {
+                flex: 2;
+            }
+            
+            .news-sidebar {
+                flex: 1;
+                margin-top: 0;
+            }
+            
+            .news-image {
+                height: 250px;
+            }
+        }
+        
+        @media (min-width: 992px) {
+            .news-image {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Шапка новостной ленты -->
+    <header class="news-header">
+        <div class="container">
+            <h1>Новостная лента</h1>
+        </div>
+    </header>
+    
+    <div class="container news-container">
+        <!-- Основная лента новостей -->
+        <main class="news-main">
+            <div class="news-feed">
+                <!-- Новость 1 -->
+                <article class="news-card">
+                    <img src="https://images.unsplash.com/photo-1499750310107-5fef28a66643" alt="Новость" class="news-image">
+                    <div class="news-content">
+                        <div class="news-meta">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Автор" class="news-avatar">
+                            <span class="news-author">Мария Смирнова</span>
+                            <span class="news-date">2 часа назад</span>
+                        </div>
+                        <h2 class="news-title">Открытие нового арт-пространства в центре города</h2>
+                        <p class="news-text">Сегодня состоялось торжественное открытие нового культурного центра, который объединит художников, музыкантов и других творческих людей. Проект реализован при поддержке городской администрации.</p>
+                        <div class="news-tags">
+                            <span class="news-tag">#культура</span>
+                            <span class="news-tag">#искусство</span>
+                            <span class="news-tag">#событие</span>
+                        </div>
+                        <div class="news-actions">
+                            <div class="news-action like">👍 124</div>
+                            <div class="news-action comment">💬 23</div>
+                            <div class="news-action share">↗ Поделиться</div>
+                        </div>
+                    </div>
+                </article>
+                
+                <!-- Новость 2 -->
+                <article class="news-card">
+                    <img src="https://images.unsplash.com/photo-1507679799987-c73779587ccf" alt="Новость" class="news-image">
+                    <div class="news-content">
+                        <div class="news-meta">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Автор" class="news-avatar">
+                            <span class="news-author">Алексей Петров</span>
+                            <span class="news-date">5 часов назад</span>
+                        </div>
+                        <h2 class="news-title">Новые меры поддержки малого бизнеса</h2>
+                        <p class="news-text">Правительство объявило о новых программах поддержки предпринимателей. Теперь можно получить льготный кредит под 3% годовых на развитие своего дела.</p>
+                        <div class="news-tags">
+                            <span class="news-tag">#бизнес</span>
+                            <span class="news-tag">#экономика</span>
+                        </div>
+                        <div class="news-actions">
+                            <div class="news-action like">👍 89</div>
+                            <div class="news-action comment">💬 15</div>
+                            <div class="news-action share">↗ Поделиться</div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Новость 3 -->
+                <article class="news-card">
+                    <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216" alt="Технологии" class="news-image">
+                    <div class="news-content">
+                        <div class="news-meta">
+                            <img src="https://randomuser.me/api/portraits/men/65.jpg" alt="Автор" class="news-avatar">
+                            <span class="news-author">Иван Технов</span>
+                            <span class="news-date">Вчера в 14:30</span>
+                        </div>
+                        <h2 class="news-title">Новый прорыв в области искусственного интеллекта</h2>
+                        <p class="news-text">Учёные представили новую модель ИИ, способную решать сложные научные задачи. Технология может ускорить разработку лекарств и материалов будущего.</p>
+                        <div class="news-tags">
+                            <span class="news-tag">#технологии</span>
+                            <span class="news-tag">#наука</span>
+                            <span class="news-tag">#ии</span>
+                        </div>
+                        <div class="news-actions">
+                            <div class="news-action like">👍 210</div>
+                            <div class="news-action comment">💬 47</div>
+                            <div class="news-action share">↗ Поделиться</div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Новость 4 -->
+                <article class="news-card">
+                    <img src="https://images.unsplash.com/photo-1517649763962-0c623066013b" alt="Спорт" class="news-image">
+                    <div class="news-content">
+                        <div class="news-meta">
+                            <img src="https://randomuser.me/api/portraits/women/33.jpg" alt="Автор" class="news-avatar">
+                            <span class="news-author">Ольга Спортивная</span>
+                            <span class="news-date">Вчера в 18:45</span>
+                        </div>
+                        <h2 class="news-title">Национальная сборная выиграла чемпионат мира</h2>
+                        <p class="news-text">В упорной борьбе наши спортсмены завоевали золотые медали. Это первая победа страны за последние 12 лет в этом виде спорта.</p>
+                        <div class="news-tags">
+                            <span class="news-tag">#спорт</span>
+                            <span class="news-tag">#победа</span>
+                            <span class="news-tag">#чемпионат</span>
+                        </div>
+                        <div class="news-actions">
+                            <div class="news-action like">👍 532</div>
+                            <div class="news-action comment">💬 128</div>
+                            <div class="news-action share">↗ Поделиться</div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Новость 5 -->
+                <article class="news-card">
+                    <img src="https://images.unsplash.com/photo-1506929562872-bb421503ef21" alt="Путешествия" class="news-image">
+                    <div class="news-content">
+                        <div class="news-meta">
+                            <img src="https://randomuser.me/api/portraits/men/22.jpg" alt="Автор" class="news-avatar">
+                            <span class="news-author">Максим Путешественник</span>
+                            <span class="news-date">2 дня назад</span>
+                        </div>
+                        <h2 class="news-title">Топ-5 неизведанных мест для отдыха в этом году</h2>
+                        <p class="news-text">Мы собрали для вас список удивительных мест, которые ещё не заполнены туристами. Успейте посетить их, пока они не стали популярными!</p>
+                        <div class="news-tags">
+                            <span class="news-tag">#путешествия</span>
+                            <span class="news-tag">#отдых</span>
+                            <span class="news-tag">#советы</span>
+                        </div>
+                        <div class="news-actions">
+                            <div class="news-action like">👍 321</div>
+                            <div class="news-action comment">💬 56</div>
+                            <div class="news-action share">↗ Поделиться</div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Новость 6 -->
+                <article class="news-card">
+                    <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0" alt="Бизнес" class="news-image">
+                    <div class="news-content">
+                        <div class="news-meta">
+                            <img src="https://randomuser.me/api/portraits/women/51.jpg" alt="Автор" class="news-avatar">
+                            <span class="news-author">Екатерина Бизнесова</span>
+                            <span class="news-date">3 дня назад</span>
+                        </div>
+                        <h2 class="news-title">Как увеличить продажи в кризис: 5 работающих стратегий</h2>
+                        <p class="news-text">Эксперты поделились проверенными методами, которые помогут вашему бизнесу не только выжить, но и расти в условиях экономической нестабильности.</p>
+                        <div class="news-tags">
+                            <span class="news-tag">#бизнес</span>
+                            <span class="news-tag">#маркетинг</span>
+                            <span class="news-tag">#советы</span>
+                        </div>
+                        <div class="news-actions">
+                            <div class="news-action like">👍 187</div>
+                            <div class="news-action comment">💬 34</div>
+                            <div class="news-action share">↗ Поделиться</div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Новость 7 -->
+                <article class="news-card">
+                    <img src="https://images.unsplash.com/photo-1498837167922-ddd27525d352" alt="Здоровье" class="news-image">
+                    <div class="news-content">
+                        <div class="news-meta">
+                            <img src="https://randomuser.me/api/portraits/men/41.jpg" alt="Автор" class="news-avatar">
+                            <span class="news-author">Доктор Здоровьев</span>
+                            <span class="news-date">4 дня назад</span>
+                        </div>
+                        <h2 class="news-title">Учёные обнаружили новый способ борьбы со старением</h2>
+                        <p class="news-text">Исследователи разработали методику, которая может замедлить процессы старения на клеточном уровне. Первые испытания показали обнадёживающие результаты.</p>
+                        <div class="news-tags">
+                            <span class="news-tag">#здоровье</span>
+                            <span class="news-tag">#наука</span>
+                            <span class="news-tag">#медицина</span>
+                        </div>
+                        <div class="news-actions">
+                            <div class="news-action like">👍 432</div>
+                            <div class="news-action comment">💬 89</div>
+                            <div class="news-action share">↗ Поделиться</div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Новость 8 -->
+                <article class="news-card">
+                    <img src="https://images.unsplash.com/photo-1467232004584-a241de8bcf5d" alt="Образование" class="news-image">
+                    <div class="news-content">
+                        <div class="news-meta">
+                            <img src="https://randomuser.me/api/portraits/women/62.jpg" alt="Автор" class="news-avatar">
+                            <span class="news-author">Анна Умнова</span>
+                            <span class="news-date">5 дней назад</span>
+                        </div>
+                        <h2 class="news-title">Революция в образовании: как изменится обучение через 5 лет</h2>
+                        <p class="news-text">Эксперты прогнозируют кардинальные изменения в системе образования. Виртуальная реальность, персонализированные программы и геймификация - вот что ждёт студентов будущего.</p>
+                        <div class="news-tags">
+                            <span class="news-tag">#образование</span>
+                            <span class="news-tag">#будущее</span>
+                            <span class="news-tag">#технологии</span>
+                        </div>
+                        <div class="news-actions">
+                            <div class="news-action like">👍 298</div>
+                            <div class="news-action comment">💬 76</div>
+                            <div class="news-action share">↗ Поделиться</div>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </main>
+        
+        <!-- Боковая панель -->
+        <aside class="news-sidebar">
+            <div class="sidebar-card">
+                <h3 class="sidebar-title">Популярные темы</h3>
+                <div class="trending-item">
+                    <div class="trending-number">1</div>
+                    <div>
+                        <div class="trending-text">#культура</div>
+                        <div class="trending-count">1,542 публикации</div>
+                    </div>
+                </div>
+                <div class="trending-item">
+                    <div class="trending-number">2</div>
+                    <div>
+                        <div class="trending-text">#бизнес</div>
+                        <div class="trending-count">1,287 публикаций</div>
+                    </div>
+                </div>
+                <div class="trending-item">
+                    <div class="trending-number">3</div>
+                    <div>
+                        <div class="trending-text">#технологии</div>
+                        <div class="trending-count">1,156 публикаций</div>
+                    </div>
+                </div>
+                <div class="trending-item">
+                    <div class="trending-number">4</div>
+                    <div>
+                        <div class="trending-text">#спорт</div>
+                        <div class="trending-count">987 публикаций</div>
+                    </div>
+                </div>
+                <div class="trending-item">
+                    <div class="trending-number">5</div>
+                    <div>
+                        <div class="trending-text">#путешествия</div>
+                        <div class="trending-count">876 публикации</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-card">
+                <h3 class="sidebar-title">Рекомендуем подписаться</h3>
+                <div class="trending-item">
+                    <img src="https://randomuser.me/api/portraits/women/22.jpg" alt="Автор" class="trending-avatar">
+                    <div>
+                        <div class="trending-text">Анна Иванова</div>
+                        <div class="trending-count">Фотограф</div>
+                    </div>
+                </div>
+                <div class="trending-item">
+                    <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Автор" class="trending-avatar">
+                    <div>
+                        <div class="trending-text">Дмитрий Соколов</div>
+                        <div class="trending-count">Бизнес-аналитик</div>
+                    </div>
+                </div>
+                <div class="trending-item">
+                    <img src="https://randomuser.me/api/portraits/women/63.jpg" alt="Автор" class="trending-avatar">
+                    <div>
+                        <div class="trending-text">Ольга Кузнецова</div>
+                        <div class="trending-count">Журналист</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-card">
+                <h3 class="sidebar-title">События рядом</h3>
+                <div class="trending-item">
+                    <div>
+                        <div class="trending-text">Выставка современного искусства</div>
+                        <div class="trending-count">Завтра, 18:00</div>
+                    </div>
+                </div>
+                <div class="trending-item">
+                    <div>
+                        <div class="trending-text">Мастер-класс по стартапам</div>
+                        <div class="trending-count">25 июня, 10:00</div>
+                    </div>
+                </div>
+                <div class="trending-item">
+                    <div>
+                        <div class="trending-text">Фестиваль уличной еды</div>
+                        <div class="trending-count">3-5 июля</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+</body>
+</html>
